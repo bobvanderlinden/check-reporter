@@ -2,7 +2,7 @@
   "name": "check-reporter",
   "version": "1.0.0",
   "description": "A Probot app",
-  "author": "Bob van der Linden <bobvanderlinden@gmail.com> (https://github.com/bobvanderlinden/check-reporter)",
+  "author": "Bob van der Linden <bobvanderlinden@gmail.com>",
   "license": "ISC",
   "repository": "https://github.com//check-reporter.git",
   "homepage": "https://github.com//check-reporter",
@@ -21,13 +21,17 @@
     "test:watch": "jest --watch --notify --notifyMode=change --coverage"
   },
   "dependencies": {
-    "nock": "^10.0.0",
     "@types/nock": "^9.3.0",
+    "body-parser": "^1.19.0",
+    "nock": "^10.0.0",
+    "pg": "^7.11.0",
     "probot": "^7.2.0"
   },
   "devDependencies": {
+    "@types/express": "^4.17.0",
     "@types/jest": "^24.0.0",
     "@types/node": "^11.9.0",
+    "@types/pg": "^7.4.14",
     "eslint-plugin-typescript": "^0.14.0",
     "jest": "^24.0.0",
     "nodemon": "^1.17.2",
