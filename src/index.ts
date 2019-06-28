@@ -14,18 +14,6 @@ class HttpError extends Error {
 }
 
 export = (app: Application) => {
-  app.on('check_suite.requested', async (context) => {
-    const { github, payload } = context
-    const { head_sha, status, conclusion } = payload
-    const repo = payload.repository.name
-    const owner = payload.repository.owner.login
-    await github.checks.createSuite({
-      head_sha,
-      owner,
-      repo
-    })
-  })
-
   const router = app.route('/api')
 
   router.use(require('body-parser').json())
