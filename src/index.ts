@@ -1,5 +1,25 @@
-import { Application } from "probot"; // eslint-disable-line no-unused-vars
+import { NextFunction, Request, RequestHandler } from "express";
+import { ApplicationFunctionOptions, Probot, run } from "probot";
 import { use } from "./db";
+
+function wrapAsync(
+  fn: (req: Request, res: Response, next: NextFunction) => any
+): RequestHandler {
+  return (req, res, next) => {
+    fn(req, res as any, next)
+      .then(() => {
+        res.end();
+      })
+      .catch((error: Error) => {
+        if (error instanceof HttpError) {
+          res.statusCode = error.status;
+          console.log("error", error.message);
+          res.end(error.message);
+        }
+        next(error);
+      });
+  };
+}
 
 class HttpError extends Error {
   public status: number;
@@ -13,13 +33,24 @@ class HttpError extends Error {
   }
 }
 
-export = (app: Application) => {
-  const router = app.route("/api");
+export function app(app: Probot, { getRouter }: ApplicationFunctionOptions) {
+  if (!getRouter) {
+    throw new Error("getRouter is undefined");
+  }
+  const router = getRouter("/api");
 
   router.use(require("body-parser").json());
 
-  router.post("/push", (req: any, res: any) => {
-    (async () => {
+  router.post(
+    "/push",
+    wrapAsync(async (req, res) => {
+      console.log("hallo");
+      if (!req.headers.authorization) {
+        throw new HttpError({
+          status: 401,
+          message: "No authorization header",
+        });
+      }
       const [authenticationMethod, authenticationToken] =
         req.headers.authorization.split(" ", 2);
       if (authenticationMethod !== "Bearer") {
@@ -50,17 +81,8 @@ export = (app: Application) => {
           repo,
         });
       });
-    })()
-      .then(() => {
-        res.end();
-      })
-      .catch((err) => {
-        app.log("Error handling push request", err);
-        if (err instanceof HttpError) {
-          res.status(err.status).end();
-        } else {
-          res.status(500).end();
-        }
-      });
-  });
-};
+    })
+  );
+}
+
+run(app);
