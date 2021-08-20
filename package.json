@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "body-parser": "^1.19.0",
-    "nock": "^13.1.1",
     "pg": "^8.7.1",
     "probot": "^12.1.0"
   },
