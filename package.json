@@ -15,7 +15,7 @@
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --external:pg-native",
     "dev": "nodemon ts-node src/index.ts",
-    "start": "node dist/index.js"
+    "start": "node --stack-size=1024 --stack-trace-limit=1000 dist/index.js"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
