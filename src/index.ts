@@ -73,9 +73,17 @@ export function app(app: Probot, { getRouter }: ApplicationFunctionOptions) {
         if (rows.length > 1) {
           throw new Error("Multiple rows for token");
         }
-        const { installation_id, owner, repo } = rows[0];
-        const github = await app.auth(installation_id, app.log);
-        await github.checks.create({
+        const { owner, repo } = rows[0];
+        const appOctokit = await app.auth(undefined, app.log);
+        const installation = await appOctokit.apps.getRepoInstallation({
+          owner,
+          repo,
+        });
+        const installationOctokit = await app.auth(
+          installation.data.id,
+          app.log
+        );
+        await installationOctokit.checks.create({
           ...req.body,
           owner,
           repo,
